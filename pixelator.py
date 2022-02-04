@@ -46,8 +46,9 @@ def normalize_color(pixel: Pixel, color_step: int) -> Pixel:
     return (pixel[0] // color_step * color_step, pixel[1] // color_step * color_step, pixel[2] // color_step * color_step)
     
 
-def pixelate(new_image, size=256, color_step=64):
-    new_image = image_resize(new_image, width=size, inter=cv2.INTER_NEAREST)
+def pixelate(new_image, pixel_detail=256, color_step=64):
+    old_size = new_image.shape[:2]
+    new_image = image_resize(new_image, width=pixel_detail, inter=cv2.INTER_NEAREST)
 
     # Iterate over every pixel in the image
     for y in range(0, new_image.shape[0]):
@@ -55,16 +56,24 @@ def pixelate(new_image, size=256, color_step=64):
             pixel: Pixel = new_image[y,x]
             new_image[y,x] = normalize_color(pixel, color_step)
 
-    return new_image
+    # Resize the image back to its original size
+    return image_resize(new_image, width=old_size[1], height=old_size[0], inter=cv2.INTER_NEAREST)
 
 
 cv2.imshow('Original', image)
-cv2.imshow('Pixelated (128)', pixelate(image, color_step=128))
-cv2.imshow('Pixelated (64)', pixelate(image, color_step=64))
-cv2.imshow('Pixelated (32)', pixelate(image, color_step=32))
-cv2.imshow('Pixelated (16)', pixelate(image, color_step=16))
-cv2.imshow('Pixelated (8)', pixelate(image, color_step=8))
-cv2.imshow('Pixelated (4)', pixelate(image, color_step=4))
+
+cv2.imshow('Pixelated (1024)', pixelate(image, pixel_detail=1024))
+cv2.imshow('Pixelated (512)', pixelate(image, pixel_detail=512))
+cv2.imshow('Pixelated (256)', pixelate(image, pixel_detail=256))
+cv2.imshow('Pixelated (128)', pixelate(image, pixel_detail=128))
+cv2.imshow('Pixelated (64)', pixelate(image, pixel_detail=64))
+cv2.imshow('Pixelated (32)', pixelate(image, pixel_detail=32))
+cv2.imshow('Pixelated (16)', pixelate(image, pixel_detail=16))
+cv2.imshow('Pixelated (8)', pixelate(image, pixel_detail=8))
+cv2.imshow('Pixelated (4)', pixelate(image, pixel_detail=4))
+cv2.imshow('Pixelated (2)', pixelate(image, pixel_detail=2))
+cv2.imshow('Pixelated (1)', pixelate(image, pixel_detail=1))
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
